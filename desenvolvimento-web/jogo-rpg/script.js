@@ -17,7 +17,7 @@ let escudo = ""
 let dano = 0
 let vidaAtual = 0
 
-function atacar() {
+function iniciarBatalha() {
 
     nomeAtk = prompt("Digite o nome do atacante:")
 
@@ -39,19 +39,70 @@ function atacar() {
         "O " + nomeDef + " possui escudo? (s / n)"
     )
 
-    if (poderAtk > poderDef && escudo == "n") {
+    vidaAtual = vidaDef
 
+    nomeAtacanteTela.innerText = nomeAtk
+    ataqueAtacanteTela.innerText = poderAtk
+
+    nomeDefensorTela.innerText = nomeDef
+    defesaDefensorTela.innerText = poderDef
+    vidaDefensorTela.innerText = vidaAtual
+
+    vidaBarra.style.width = "100%"
+
+    resultado.innerHTML = `
+        <h2>Batalha iniciada!</h2>
+        <p>${nomeAtk} VS ${nomeDef}</p>
+    `
+}
+
+
+
+function atacar() {
+
+    if (vidaAtual <= 0) {
+        resultado.innerHTML = `
+            <h2>💀 O defensor já foi derrotado!</h2>
+            <p>Inicie uma nova batalha.</p>
+        `
+        return
+    }
+
+    if (poderAtk > poderDef && escudo == "n") {
         dano = poderAtk - poderDef
 
     } else if (poderAtk > poderDef && escudo == "s") {
-
         dano = (poderAtk - poderDef) / 2
 
-    } else if (poderAtk <= poderDef) {
-
+    } else {
         dano = 0
     }
 
+    vidaAtual = vidaAtual - dano
+
+    if (vidaAtual < 0) {
+        vidaAtual = 0
+    }
+
+    let porcentagemVida = (vidaAtual / vidaDef) * 100
+
+    vidaBarra.style.width = porcentagemVida + "%"
+    vidaDefensorTela.innerText = vidaAtual
+
+    resultado.innerHTML = `
+        <h2>⚔️ Resultado do ataque</h2>
+
+        <p>${nomeAtk} atacou ${nomeDef}!</p>
+        <p>Dano causado: ${dano}</p>
+        <p>Vida restante: ${vidaAtual}</p>
+    `
+
+    if (vidaAtual == 0) {
+        resultado.innerHTML += `
+            <h2>💀 ${nomeDef} foi derrotado!</h2>
+        `
+    }
+}
     vidaAtual = vidaDef - dano
 
     let porcentagemVida = (vidaAtual / vidaDef) * 100
@@ -76,4 +127,3 @@ vidaDefensorTela.innerText = vidaAtual
         <p>Dano causado: ${dano}</p>
         <p>Vida atual: ${vidaAtual}</p>
     `
-}

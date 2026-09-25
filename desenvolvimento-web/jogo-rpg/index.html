@@ -12,10 +12,14 @@
 
 <body>
 
+    <!-- TÍTULO DO JOGO -->
     <h1>⚔️ Batalha RPG ⚔️</h1>
     <p>Prepare seu personagem e enfrente o inimigo!</p>
 
+
+    <!-- ÁREA DA BATALHA -->
     <div class="batalha">
+
 
         <!-- ATACANTE -->
         <div class="personagem">
@@ -31,6 +35,16 @@
                 ⚔️ Ataque:
                 <span id="ataqueAtacante">0</span>
             </p>
+
+            <p>
+                ❤️ Vida:
+                <span id="vidaAtacante">0</span>
+            </p>
+
+            <!-- BARRA DE VIDA DO ATACANTE -->
+            <div class="barra-vida">
+                <div id="vidaBarraAtacante"></div>
+            </div>
 
         </div>
 
@@ -55,7 +69,7 @@
                 <span id="vidaDefensor">0</span>
             </p>
 
-            <!-- BARRA DE VIDA -->
+            <!-- BARRA DE VIDA DO DEFENSOR -->
             <div class="barra-vida">
                 <div id="vidaBarra"></div>
             </div>
@@ -65,13 +79,17 @@
     </div>
 
 
-    <!-- BOTÃO DE ATAQUE -->
-    <button onclick="iniciarBatalha()">Iniciar Batalha</button>
+    <!-- BOTÕES -->
+    <button onclick="iniciarBatalha()">
+        Iniciar Batalha
+    </button>
 
-<button onclick="atacar()">Atacar ⚔️</button>
+    <button onclick="atacar()">
+        Atacar ⚔️
+    </button>
 
 
-    <!-- RESULTADO DA BATALHA -->
+    <!-- RESULTADO -->
     <div class="resultado"></div>
 
 

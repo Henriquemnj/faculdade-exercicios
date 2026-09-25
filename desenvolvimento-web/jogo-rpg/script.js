@@ -1,19 +1,27 @@
+// =============================
 // ELEMENTOS DA TELA
+// =============================
 
 let resultado = document.querySelector(".resultado")
 
+// Atacante
 let nomeAtacanteTela = document.querySelector("#nomeAtacante")
 let ataqueAtacanteTela = document.querySelector("#ataqueAtacante")
+let defesaAtacanteTela = document.querySelector("#defesaAtacante")
 let vidaAtacanteTela = document.querySelector("#vidaAtacante")
 let vidaBarraAtacante = document.querySelector("#vidaBarraAtacante")
 
+// Defensor
 let nomeDefensorTela = document.querySelector("#nomeDefensor")
+let ataqueDefensorTela = document.querySelector("#ataqueDefensor")
 let defesaDefensorTela = document.querySelector("#defesaDefensor")
 let vidaDefensorTela = document.querySelector("#vidaDefensor")
 let vidaBarra = document.querySelector("#vidaBarra")
 
 
+// =============================
 // DADOS DO ATACANTE
+// =============================
 
 let nomeAtk = ""
 let poderAtk = 0
@@ -22,7 +30,9 @@ let vidaAtk = 0
 let vidaAtualAtk = 0
 
 
+// =============================
 // DADOS DO DEFENSOR
+// =============================
 
 let nomeDef = ""
 let ataqueDef = 0
@@ -31,69 +41,147 @@ let vidaDef = 0
 let vidaAtual = 0
 
 let escudo = ""
-
 let dano = 0
 
 
+// =============================
+// VALIDAÇÃO DE NÚMEROS
+// =============================
+
+function pedirNumero(mensagem) {
+
+    let numero = Number(prompt(mensagem))
+
+    while (isNaN(numero) || numero <= 0) {
+
+        alert("Digite um número válido maior que 0!")
+
+        numero = Number(prompt(mensagem))
+    }
+
+    return numero
+}
+
+
+// =============================
+// VALIDAÇÃO DE NOME
+// =============================
+
+function pedirNome(mensagem) {
+
+    let nome = prompt(mensagem)
+
+    while (nome == null || nome.trim() == "") {
+
+        alert("Digite um nome válido!")
+
+        nome = prompt(mensagem)
+    }
+
+    return nome.trim()
+}
+
+
+// =============================
+// VALIDAÇÃO DO ESCUDO
+// =============================
+
+function pedirEscudo(mensagem) {
+
+    let resposta = prompt(mensagem)
+
+    while (
+        resposta == null ||
+        (
+            resposta.toLowerCase() != "s" &&
+            resposta.toLowerCase() != "n"
+        )
+    ) {
+
+        alert("Digite apenas s ou n!")
+
+        resposta = prompt(mensagem)
+    }
+
+    return resposta.toLowerCase()
+}
+
+
+// =============================
 // INICIAR BATALHA
+// =============================
 
 function iniciarBatalha() {
 
+    // =============================
     // DADOS DO ATACANTE
+    // =============================
 
-    nomeAtk = prompt("Digite o nome do atacante:")
-
-    poderAtk = Number(
-        prompt("Digite o poder de ataque do " + nomeAtk + ":")
+    nomeAtk = pedirNome(
+        "Digite o nome do atacante:"
     )
 
-    defesaAtk = Number(
-        prompt("Digite o poder de defesa do " + nomeAtk + ":")
+    poderAtk = pedirNumero(
+        "Digite o poder de ataque do " + nomeAtk + ":"
     )
 
-    vidaAtk = Number(
-        prompt("Digite os pontos de vida do " + nomeAtk + ":")
+    defesaAtk = pedirNumero(
+        "Digite o poder de defesa do " + nomeAtk + ":"
+    )
+
+    vidaAtk = pedirNumero(
+        "Digite os pontos de vida do " + nomeAtk + ":"
     )
 
     vidaAtualAtk = vidaAtk
 
 
+    // =============================
     // DADOS DO DEFENSOR
+    // =============================
 
-    nomeDef = prompt("Digite o nome do defensor:")
-
-    ataqueDef = Number(
-        prompt("Digite o poder de ataque do " + nomeDef + ":")
+    nomeDef = pedirNome(
+        "Digite o nome do defensor:"
     )
 
-    poderDef = Number(
-        prompt("Digite o poder de defesa do " + nomeDef + ":")
+    ataqueDef = pedirNumero(
+        "Digite o poder de ataque do " + nomeDef + ":"
     )
 
-    vidaDef = Number(
-        prompt("Digite os pontos de vida do " + nomeDef + ":")
+    poderDef = pedirNumero(
+        "Digite o poder de defesa do " + nomeDef + ":"
     )
 
-    escudo = prompt(
+    vidaDef = pedirNumero(
+        "Digite os pontos de vida do " + nomeDef + ":"
+    )
+
+    escudo = pedirEscudo(
         "O " + nomeDef + " possui escudo? (s / n)"
     )
 
     vidaAtual = vidaDef
 
 
-    // ATUALIZA O ATACANTE NA TELA
+    // =============================
+    // ATUALIZA O ATACANTE
+    // =============================
 
     nomeAtacanteTela.innerText = nomeAtk
     ataqueAtacanteTela.innerText = poderAtk
+    defesaAtacanteTela.innerText = defesaAtk
     vidaAtacanteTela.innerText = vidaAtualAtk
 
     vidaBarraAtacante.style.width = "100%"
     vidaBarraAtacante.style.backgroundColor = "green"
 
 
-    // ATUALIZA O DEFENSOR NA TELA
+    // =============================
+    // ATUALIZA O DEFENSOR
+    // =============================
 
     nomeDefensorTela.innerText = nomeDef
+    ataqueDefensorTela.innerText = ataqueDef
     defesaDefensorTela.innerText = poderDef
     vidaDefensorTela.innerText = vidaAtual
 
@@ -105,23 +193,23 @@ function iniciarBatalha() {
 
     resultado.innerHTML = `
         <h2>⚔️ Batalha iniciada!</h2>
-
         <p>${nomeAtk} VS ${nomeDef}</p>
     `
 }
 
 
+// =============================
 // ATACAR
+// =============================
 
 function atacar() {
 
-    // VERIFICA SE O ATACANTE JÁ FOI DERROTADO
+    // VERIFICA SE O ATACANTE JÁ MORREU
 
     if (vidaAtualAtk <= 0) {
 
         resultado.innerHTML = `
             <h2>💀 ${nomeAtk} já foi derrotado!</h2>
-
             <p>Inicie uma nova batalha.</p>
         `
 
@@ -129,13 +217,12 @@ function atacar() {
     }
 
 
-    // VERIFICA SE O DEFENSOR JÁ FOI DERROTADO
+    // VERIFICA SE O DEFENSOR JÁ MORREU
 
     if (vidaAtual <= 0) {
 
         resultado.innerHTML = `
             <h2>💀 ${nomeDef} já foi derrotado!</h2>
-
             <p>Inicie uma nova batalha.</p>
         `
 
@@ -143,9 +230,9 @@ function atacar() {
     }
 
 
-    // =========================
+    // =============================
     // ATAQUE DO ATACANTE
-    // =========================
+    // =============================
 
     if (poderAtk > poderDef && escudo == "n") {
 
@@ -173,19 +260,23 @@ function atacar() {
     }
 
 
-    // CALCULA PORCENTAGEM DE VIDA DO DEFENSOR
+    // CALCULA PORCENTAGEM DA VIDA
 
-    let porcentagemVida = (vidaAtual / vidaDef) * 100
+    let porcentagemVida =
+        (vidaAtual / vidaDef) * 100
 
 
     // ATUALIZA VIDA DO DEFENSOR
 
     vidaDefensorTela.innerText = vidaAtual
 
-    vidaBarra.style.width = porcentagemVida + "%"
+    vidaBarra.style.width =
+        porcentagemVida + "%"
 
 
+    // =============================
     // COR DA BARRA DO DEFENSOR
+    // =============================
 
     if (porcentagemVida > 50) {
 
@@ -201,20 +292,43 @@ function atacar() {
     }
 
 
-    // MOSTRA O ATAQUE
+    // =============================
+    // RESULTADO DO ATAQUE
+    // =============================
 
-    resultado.innerHTML = `
-        <h2>⚔️ Ataque!</h2>
+    if (dano == 0) {
 
-        <p>${nomeAtk} atacou ${nomeDef}!</p>
+        resultado.innerHTML = `
+            <h2>🛡️ Ataque bloqueado!</h2>
 
-        <p>Dano causado: ${dano}</p>
+            <p>
+                ${nomeAtk} atacou ${nomeDef},
+                mas não conseguiu causar dano!
+            </p>
 
-        <p>Vida restante de ${nomeDef}: ${vidaAtual}</p>
-    `
+            <p>Vida de ${nomeDef}: ${vidaAtual}</p>
+        `
+
+    } else {
+
+        resultado.innerHTML = `
+            <h2>⚔️ Ataque!</h2>
+
+            <p>${nomeAtk} atacou ${nomeDef}!</p>
+
+            <p>Dano causado: ${dano}</p>
+
+            <p>
+                Vida restante de ${nomeDef}:
+                ${vidaAtual}
+            </p>
+        `
+    }
 
 
-    // VERIFICA SE O DEFENSOR MORREU
+    // =============================
+    // DEFENSOR FOI DERROTADO?
+    // =============================
 
     if (vidaAtual <= 0) {
 
@@ -226,14 +340,11 @@ function atacar() {
     }
 
 
-    // =========================
+    // =============================
     // CONTRA-ATAQUE DO DEFENSOR
-    // =========================
+    // =============================
 
     let danoDefensor = 0
-
-
-    // CALCULA O DANO DO DEFENSOR
 
     if (ataqueDef > defesaAtk) {
 
@@ -247,7 +358,8 @@ function atacar() {
 
     // RETIRA VIDA DO ATACANTE
 
-    vidaAtualAtk = vidaAtualAtk - danoDefensor
+    vidaAtualAtk =
+        vidaAtualAtk - danoDefensor
 
 
     // IMPEDE VIDA NEGATIVA
@@ -257,7 +369,7 @@ function atacar() {
     }
 
 
-    // CALCULA PORCENTAGEM DE VIDA DO ATACANTE
+    // CALCULA PORCENTAGEM DA VIDA
 
     let porcentagemVidaAtk =
         (vidaAtualAtk / vidaAtk) * 100
@@ -265,13 +377,16 @@ function atacar() {
 
     // ATUALIZA VIDA DO ATACANTE
 
-    vidaAtacanteTela.innerText = vidaAtualAtk
+    vidaAtacanteTela.innerText =
+        vidaAtualAtk
 
     vidaBarraAtacante.style.width =
         porcentagemVidaAtk + "%"
 
 
+    // =============================
     // COR DA BARRA DO ATACANTE
+    // =============================
 
     if (porcentagemVidaAtk > 50) {
 
@@ -287,20 +402,43 @@ function atacar() {
     }
 
 
-    // MOSTRA O CONTRA-ATAQUE
+    // =============================
+    // RESULTADO DO CONTRA-ATAQUE
+    // =============================
 
-    resultado.innerHTML += `
-        <h2>🔥 Contra-ataque!</h2>
+    if (danoDefensor == 0) {
 
-        <p>${nomeDef} atacou ${nomeAtk}!</p>
+        resultado.innerHTML += `
+            <h2>🛡️ Contra-ataque bloqueado!</h2>
 
-        <p>Dano causado: ${danoDefensor}</p>
+            <p>
+                ${nomeDef} atacou ${nomeAtk},
+                mas não conseguiu causar dano!
+            </p>
 
-        <p>Vida restante de ${nomeAtk}: ${vidaAtualAtk}</p>
-    `
+            <p>Vida de ${nomeAtk}: ${vidaAtualAtk}</p>
+        `
+
+    } else {
+
+        resultado.innerHTML += `
+            <h2>🔥 Contra-ataque!</h2>
+
+            <p>${nomeDef} atacou ${nomeAtk}!</p>
+
+            <p>Dano causado: ${danoDefensor}</p>
+
+            <p>
+                Vida restante de ${nomeAtk}:
+                ${vidaAtualAtk}
+            </p>
+        `
+    }
 
 
-    // VERIFICA SE O ATACANTE MORREU
+    // =============================
+    // ATACANTE FOI DERROTADO?
+    // =============================
 
     if (vidaAtualAtk <= 0) {
 
@@ -308,4 +446,73 @@ function atacar() {
             <h2>💀 ${nomeAtk} foi derrotado!</h2>
         `
     }
+}
+
+
+// =============================
+// NOVA BATALHA
+// =============================
+
+function novaBatalha() {
+
+    // LIMPA O ATACANTE
+
+    nomeAtk = ""
+    poderAtk = 0
+    defesaAtk = 0
+    vidaAtk = 0
+    vidaAtualAtk = 0
+
+
+    // LIMPA O DEFENSOR
+
+    nomeDef = ""
+    ataqueDef = 0
+    poderDef = 0
+    vidaDef = 0
+    vidaAtual = 0
+
+    escudo = ""
+    dano = 0
+
+
+    // =============================
+    // LIMPA O CARD DO ATACANTE
+    // =============================
+
+    nomeAtacanteTela.innerText = "---"
+    ataqueAtacanteTela.innerText = 0
+    defesaAtacanteTela.innerText = 0
+    vidaAtacanteTela.innerText = 0
+
+
+    // =============================
+    // LIMPA O CARD DO DEFENSOR
+    // =============================
+
+    nomeDefensorTela.innerText = "---"
+    ataqueDefensorTela.innerText = 0
+    defesaDefensorTela.innerText = 0
+    vidaDefensorTela.innerText = 0
+
+
+    // =============================
+    // RESETA AS BARRAS
+    // =============================
+
+    vidaBarraAtacante.style.width = "100%"
+    vidaBarraAtacante.style.backgroundColor = "green"
+
+    vidaBarra.style.width = "100%"
+    vidaBarra.style.backgroundColor = "green"
+
+
+    // LIMPA O RESULTADO
+
+    resultado.innerHTML = ""
+
+
+    // INICIA OUTRA BATALHA
+
+    iniciarBatalha()
 }

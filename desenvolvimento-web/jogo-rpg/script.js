@@ -1,5 +1,13 @@
 let resultado = document.querySelector(".resultado")
 
+let nomeAtacanteTela = document.querySelector("#nomeAtacante")
+let ataqueAtacanteTela = document.querySelector("#ataqueAtacante")
+
+let nomeDefensorTela = document.querySelector("#nomeDefensor")
+let defesaDefensorTela = document.querySelector("#defesaDefensor")
+let vidaDefensorTela = document.querySelector("#vidaDefensor")
+let vidaBarra = document.querySelector("#vidaBarra")
+
 let poderAtk = 0
 let nomeAtk = ""
 let nomeDef = ""
@@ -45,6 +53,17 @@ function atacar() {
     }
 
     vidaAtual = vidaDef - dano
+
+    let porcentagemVida = (vidaAtual / vidaDef) * 100
+
+vidaBarra.style.width = porcentagemVida + "%"
+
+    nomeAtacanteTela.innerText = nomeAtk
+ataqueAtacanteTela.innerText = poderAtk
+
+nomeDefensorTela.innerText = nomeDef
+defesaDefensorTela.innerText = poderDef
+vidaDefensorTela.innerText = vidaAtual
 
     resultado.innerHTML = `
         <h2>Resultado do ataque</h2>

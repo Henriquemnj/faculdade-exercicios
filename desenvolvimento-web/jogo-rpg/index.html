@@ -1,13 +1,81 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>jogo rpg</title>
+
+    <title>Jogo RPG</title>
+
+    <link rel="stylesheet" href="./style.css">
 </head>
+
 <body>
+
+    <h1>⚔️ Batalha RPG ⚔️</h1>
+    <p>Prepare seu personagem e enfrente o inimigo!</p>
+
+    <div class="batalha">
+
+        <!-- ATACANTE -->
+        <div class="personagem">
+
+            <h2>🧙 Atacante</h2>
+
+            <p>
+                Nome:
+                <span id="nomeAtacante">---</span>
+            </p>
+
+            <p>
+                ⚔️ Ataque:
+                <span id="ataqueAtacante">0</span>
+            </p>
+
+        </div>
+
+
+        <!-- DEFENSOR -->
+        <div class="personagem">
+
+            <h2>😈 Defensor</h2>
+
+            <p>
+                Nome:
+                <span id="nomeDefensor">---</span>
+            </p>
+
+            <p>
+                🛡️ Defesa:
+                <span id="defesaDefensor">0</span>
+            </p>
+
+            <p>
+                ❤️ Vida:
+                <span id="vidaDefensor">0</span>
+            </p>
+
+            <!-- BARRA DE VIDA -->
+            <div class="barra-vida">
+                <div id="vidaBarra"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- BOTÃO DE ATAQUE -->
     <button onclick="atacar()">Atacar</button>
+
+
+    <!-- RESULTADO DA BATALHA -->
     <div class="resultado"></div>
+
+
+    <!-- JAVASCRIPT -->
     <script src="./script.js"></script>
+
 </body>
+
 </html>

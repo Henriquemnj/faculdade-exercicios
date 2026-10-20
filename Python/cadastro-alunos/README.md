@@ -10,6 +10,18 @@ Exercício da aula de **05/10/2026**, transcrito das fotos da aula com as corre�
 - Classificar como **Aprovado** quando a nota for maior ou igual a 6 e **Reprovado** quando for menor que 6.
 - Limpar os campos e o texto exibido.
 
+## Demonstração da interface
+
+### Cadastro realizado com sucesso
+
+![Mensagem de confirmação do cadastro](imagens/cadastro-sucesso.png)
+
+### Listagem de alunos
+
+![Listagem de alunos aprovados e reprovados](imagens/listagem-alunos.png)
+
+A demonstração mostra quatro alunos cadastrados, três aprovados e um reprovado.
+
 ## Como executar
 
 É necessário Python 3 com Tkinter e um ambiente gráfico. Na raiz do repositório:

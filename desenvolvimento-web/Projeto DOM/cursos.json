@@ -1,0 +1,27 @@
+
+[
+    {
+        "id": 1,
+        "titulo": "HTML",
+        "nivel": "basico",
+        "horas": 10
+    },
+    {
+        "id": 2,
+        "titulo": "CSS",
+        "nivel": "basico",
+        "horas": 12
+    },
+    {
+        "id": 3,
+        "titulo": "JavaScript",
+        "nivel": "intermediario",
+        "horas": 20
+    },
+    {
+        "id": 4,
+        "titulo": "PHP",
+        "nivel": "avançado",
+        "horas": 22
+    }
+]

@@ -1,0 +1,31 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula 12 - JavaScript DOM e Ajax</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <main>
+        <h1 id="titulo">Catálogo de cursos</h1>
+
+        <button id="alterar" type="button">Alterar título</button>
+        <button id="adicionar" type="button">Adicionar exemplo</button>
+        <button id="excluir" type="button">Excluir último</button>
+        <button id="fetch" type="button">Carregar com Fetch</button>
+        <button id="xhr" type="button">Carregar com XHR</button>
+
+        <p id="status" role="status">Escolha uma ação</p>
+
+        <ul id="lista"></ul>
+
+        <h2>Saídas dos fundamentos</h2>
+        <pre id="saida"></pre>
+    </main>
+
+    <script src="./fundamentos.js"></script>
+    <script src="./app.js"></script>
+</body>
+</html>

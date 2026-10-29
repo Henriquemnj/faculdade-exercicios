@@ -1,0 +1,41 @@
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f8fafc;
+    color: #172033;
+    margin: 24px;
+}
+
+main {
+    max-width: 900px;
+    margin: auto;
+}
+
+button {
+    padding: 10px;
+    margin: 4px;
+    cursor: pointer;
+}
+
+button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+li {
+    margin: 10px 0;
+}
+
+pre {
+    white-space: pre-wrap;
+    line-height: 1.8;
+    padding: 16px;
+    background: #eef2f7;
+    border-radius: 8px;
+    overflow-wrap: anywhere;
+}
+
+:focus-visible {
+    outline: 3px solid #6541c6;
+    outline-offset: 2px;
+}

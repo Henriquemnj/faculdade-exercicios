@@ -10,8 +10,14 @@ const CATALOGO_CLASSES = Object.freeze({
         vida: 85,
         ataque: 34,
         defesa: 6,
-        habilidadeOfensiva: "Golpe Sombrio (+12 de ataque)",
-        habilidadeDefensiva: "Passo Sombrio (esquiva o próximo golpe da rodada)"
+        ofensiva: Object.freeze({
+            nome: "Golpe Sombrio",
+            descricao: "Soma 12 ao ataque neste golpe."
+        }),
+        defensiva: Object.freeze({
+            nome: "Passo Sombrio",
+            descricao: "Esquiva o próximo golpe da rodada."
+        })
     }),
     iris: Object.freeze({
         id: "iris",
@@ -20,8 +26,14 @@ const CATALOGO_CLASSES = Object.freeze({
         vida: 100,
         ataque: 30,
         defesa: 8,
-        habilidadeOfensiva: "Raio Arcano (ignora metade da defesa base)",
-        habilidadeDefensiva: "Barreira Arcana (absorve até 12 de dano do próximo golpe)"
+        ofensiva: Object.freeze({
+            nome: "Raio Arcano",
+            descricao: "Ignora metade da defesa base do alvo."
+        }),
+        defensiva: Object.freeze({
+            nome: "Barreira Arcana",
+            descricao: "Absorve até 12 de dano do próximo golpe."
+        })
     }),
     bronn: Object.freeze({
         id: "bronn",
@@ -30,16 +42,25 @@ const CATALOGO_CLASSES = Object.freeze({
         vida: 135,
         ataque: 23,
         defesa: 14,
-        habilidadeOfensiva: "Investida de Escudo (+6 de ataque e protege até 6 no próximo golpe)",
-        habilidadeDefensiva: "Muralha (reduz pela metade o próximo golpe)"
+        ofensiva: Object.freeze({
+            nome: "Investida de Escudo",
+            descricao: "Soma 6 ao ataque e protege até 6 contra o próximo golpe após executar."
+        }),
+        defensiva: Object.freeze({
+            nome: "Muralha",
+            descricao: "Reduz pela metade o próximo golpe."
+        })
     })
 });
+
+const RECARGA_HABILIDADE = 2;
+const LIMITE_RODADAS_SEM_DANO = 3;
 
 // =============================
 // FÁBRICA DE INSTÂNCIAS INDEPENDENTES
 // =============================
 
-function criarLutador(classeId, apelidoDigitado, tagJogador) {
+function criarLutador(classeId, apelidoDigitado, numeroJogador) {
     const modelo = CATALOGO_CLASSES[classeId];
 
     if (!modelo) {
@@ -50,11 +71,13 @@ function criarLutador(classeId, apelidoDigitado, tagJogador) {
         ? apelidoDigitado.trim().slice(0, 24)
         : "";
 
+    const tagJogador = `J${numeroJogador}`;
     const nomeExibicao = apelidoLimpo !== ""
         ? `${apelidoLimpo} (${modelo.nomeBase})`
         : `${modelo.nomeBase} (${tagJogador})`;
 
     return {
+        numeroJogador: numeroJogador,
         classeId: modelo.id,
         nomeBase: modelo.nomeBase,
         classe: modelo.classe,
@@ -63,8 +86,25 @@ function criarLutador(classeId, apelidoDigitado, tagJogador) {
         vidaMax: modelo.vida,
         vidaAtual: modelo.vida,
         ataque: modelo.ataque,
-        defesa: modelo.defesa
+        defesa: modelo.defesa,
+        ofensiva: modelo.ofensiva,
+        defensiva: modelo.defensiva,
+        recargaOfensiva: 0,
+        recargaDefensiva: 0,
+        efeitos: {
+            esquiva: false,
+            barreira: 0,
+            muralha: false,
+            escudoInvestida: 0
+        }
     };
+}
+
+function limparEfeitosRodada(lutador) {
+    lutador.efeitos.esquiva = false;
+    lutador.efeitos.barreira = 0;
+    lutador.efeitos.muralha = false;
+    lutador.efeitos.escudoInvestida = 0;
 }
 
 // =============================
@@ -74,6 +114,8 @@ function criarLutador(classeId, apelidoDigitado, tagJogador) {
 let estadoBatalha = "aguardando"; // "aguardando" | "em_andamento" | "encerrada"
 let lutador1 = null;
 let lutador2 = null;
+let rodadaAtual = 0;
+let rodadasSemDano = 0;
 
 // =============================
 // INICIALIZAÇÃO DA ARENA
@@ -100,6 +142,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const btnNovaBatalha = document.querySelector("#btnNovaBatalha");
     const resultado = document.querySelector("#resultado");
 
+    // Painel de status da rodada
+    const numeroRodadaTela = document.querySelector("#numeroRodada");
+    const textoIniciativaTela = document.querySelector("#textoIniciativa");
+    const contadorSemDanoTela = document.querySelector("#contadorSemDano");
+
     // Elementos Jogador 1
     const nomeAtacanteTela = document.querySelector("#nomeAtacante");
     const classeAtacanteTela = document.querySelector("#classeAtacanteTela");
@@ -119,6 +166,32 @@ document.addEventListener("DOMContentLoaded", () => {
     const vidaMaxDefensorTela = document.querySelector("#vidaMaxDefensor");
     const vidaBarraDefensor = document.querySelector("#vidaBarraDefensor");
     const barraContainerDefensor = document.querySelector("#barraContainerDefensor");
+
+    // Controles de ação por jogador
+    const controlesAcao = {
+        1: {
+            basico: document.querySelector("#radioBasicoJ1"),
+            ofensiva: document.querySelector("#radioOfensivaJ1"),
+            defensiva: document.querySelector("#radioDefensivaJ1"),
+            nomeOfensiva: document.querySelector("#nomeOfensivaJ1"),
+            descOfensiva: document.querySelector("#descOfensivaJ1"),
+            statusOfensiva: document.querySelector("#statusOfensivaJ1"),
+            nomeDefensiva: document.querySelector("#nomeDefensivaJ1"),
+            descDefensiva: document.querySelector("#descDefensivaJ1"),
+            statusDefensiva: document.querySelector("#statusDefensivaJ1")
+        },
+        2: {
+            basico: document.querySelector("#radioBasicoJ2"),
+            ofensiva: document.querySelector("#radioOfensivaJ2"),
+            defensiva: document.querySelector("#radioDefensivaJ2"),
+            nomeOfensiva: document.querySelector("#nomeOfensivaJ2"),
+            descOfensiva: document.querySelector("#descOfensivaJ2"),
+            statusOfensiva: document.querySelector("#statusOfensivaJ2"),
+            nomeDefensiva: document.querySelector("#nomeDefensivaJ2"),
+            descDefensiva: document.querySelector("#descDefensivaJ2"),
+            statusDefensiva: document.querySelector("#statusDefensivaJ2")
+        }
+    };
 
     function renderizarPrevia(classeId, apelido, containerPrevia) {
         containerPrevia.replaceChildren();
@@ -144,7 +217,10 @@ document.addEventListener("DOMContentLoaded", () => {
         const pAtributos = document.createElement("p");
         pAtributos.textContent = `❤️ Vida: ${modelo.vida} | ⚔️ Ataque: ${modelo.ataque} | 🛡️ Defesa: ${modelo.defesa}`;
 
-        containerPrevia.append(pTitulo, pAtributos);
+        const pHabilidades = document.createElement("p");
+        pHabilidades.textContent = `✨ ${modelo.ofensiva.nome} / 🛡️ ${modelo.defensiva.nome}`;
+
+        containerPrevia.append(pTitulo, pAtributos, pHabilidades);
     }
 
     function atualizarBarraVida(vidaAtual, vidaMax, barraEl, containerEl) {
@@ -164,6 +240,69 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    function atualizarBadgeRecarga(badgeEl, valorRecarga, ativo) {
+        badgeEl.classList.remove("pronta", "em-recarga");
+
+        if (!ativo) {
+            badgeEl.textContent = "Indisponível";
+            return;
+        }
+
+        if (valorRecarga > 0) {
+            badgeEl.textContent = `Recarga: ${valorRecarga} ${valorRecarga === 1 ? "rodada" : "rodadas"}`;
+            badgeEl.classList.add("em-recarga");
+        } else {
+            badgeEl.textContent = "Pronta";
+            badgeEl.classList.add("pronta");
+        }
+    }
+
+    function atualizarControlesAcaoJogador(numeroJogador, lutador) {
+        const ui = controlesAcao[numeroJogador];
+        const emCombate = estadoBatalha === "em_andamento" && Boolean(lutador);
+
+        ui.basico.checked = true;
+        ui.basico.disabled = !emCombate;
+
+        if (!lutador) {
+            ui.nomeOfensiva.textContent = "Habilidade Ofensiva";
+            ui.descOfensiva.textContent = "Selecione um personagem para liberar.";
+            ui.ofensiva.disabled = true;
+            atualizarBadgeRecarga(ui.statusOfensiva, 0, false);
+
+            ui.nomeDefensiva.textContent = "Habilidade Defensiva";
+            ui.descDefensiva.textContent = "Selecione um personagem para liberar.";
+            ui.defensiva.disabled = true;
+            atualizarBadgeRecarga(ui.statusDefensiva, 0, false);
+            return;
+        }
+
+        ui.nomeOfensiva.textContent = lutador.ofensiva.nome;
+        ui.descOfensiva.textContent = lutador.ofensiva.descricao;
+        ui.ofensiva.disabled = !emCombate || lutador.recargaOfensiva > 0;
+        atualizarBadgeRecarga(ui.statusOfensiva, lutador.recargaOfensiva, emCombate);
+
+        ui.nomeDefensiva.textContent = lutador.defensiva.nome;
+        ui.descDefensiva.textContent = lutador.defensiva.descricao;
+        ui.defensiva.disabled = !emCombate || lutador.recargaDefensiva > 0;
+        atualizarBadgeRecarga(ui.statusDefensiva, lutador.recargaDefensiva, emCombate);
+    }
+
+    function atualizarPainelRodada() {
+        numeroRodadaTela.textContent = String(rodadaAtual);
+        contadorSemDanoTela.textContent = `${rodadasSemDano} / ${LIMITE_RODADAS_SEM_DANO}`;
+
+        if (estadoBatalha !== "em_andamento" || !lutador1 || !lutador2) {
+            textoIniciativaTela.textContent = estadoBatalha === "encerrada"
+                ? "Batalha encerrada"
+                : "Aguardando início";
+            return;
+        }
+
+        const primeiro = rodadaAtual % 2 === 1 ? lutador1 : lutador2;
+        textoIniciativaTela.textContent = `Jogador ${primeiro.numeroJogador} (${primeiro.nomeExibicao})`;
+    }
+
     function atualizarCardsArena() {
         if (!lutador1 || !lutador2) {
             nomeAtacanteTela.textContent = "---";
@@ -181,24 +320,27 @@ document.addEventListener("DOMContentLoaded", () => {
             vidaDefensorTela.textContent = "0";
             vidaMaxDefensorTela.textContent = "0";
             atualizarBarraVida(100, 100, vidaBarraDefensor, barraContainerDefensor);
-            return;
+        } else {
+            nomeAtacanteTela.textContent = lutador1.nomeExibicao;
+            classeAtacanteTela.textContent = lutador1.classe;
+            ataqueAtacanteTela.textContent = String(lutador1.ataque);
+            defesaAtacanteTela.textContent = String(lutador1.defesa);
+            vidaAtacanteTela.textContent = String(lutador1.vidaAtual);
+            vidaMaxAtacanteTela.textContent = String(lutador1.vidaMax);
+            atualizarBarraVida(lutador1.vidaAtual, lutador1.vidaMax, vidaBarraAtacante, barraContainerAtacante);
+
+            nomeDefensorTela.textContent = lutador2.nomeExibicao;
+            classeDefensorTela.textContent = lutador2.classe;
+            ataqueDefensorTela.textContent = String(lutador2.ataque);
+            defesaDefensorTela.textContent = String(lutador2.defesa);
+            vidaDefensorTela.textContent = String(lutador2.vidaAtual);
+            vidaMaxDefensorTela.textContent = String(lutador2.vidaMax);
+            atualizarBarraVida(lutador2.vidaAtual, lutador2.vidaMax, vidaBarraDefensor, barraContainerDefensor);
         }
 
-        nomeAtacanteTela.textContent = lutador1.nomeExibicao;
-        classeAtacanteTela.textContent = lutador1.classe;
-        ataqueAtacanteTela.textContent = String(lutador1.ataque);
-        defesaAtacanteTela.textContent = String(lutador1.defesa);
-        vidaAtacanteTela.textContent = String(lutador1.vidaAtual);
-        vidaMaxAtacanteTela.textContent = String(lutador1.vidaMax);
-        atualizarBarraVida(lutador1.vidaAtual, lutador1.vidaMax, vidaBarraAtacante, barraContainerAtacante);
-
-        nomeDefensorTela.textContent = lutador2.nomeExibicao;
-        classeDefensorTela.textContent = lutador2.classe;
-        ataqueDefensorTela.textContent = String(lutador2.ataque);
-        defesaDefensorTela.textContent = String(lutador2.defesa);
-        vidaDefensorTela.textContent = String(lutador2.vidaAtual);
-        vidaMaxDefensorTela.textContent = String(lutador2.vidaMax);
-        atualizarBarraVida(lutador2.vidaAtual, lutador2.vidaMax, vidaBarraDefensor, barraContainerDefensor);
+        atualizarControlesAcaoJogador(1, lutador1);
+        atualizarControlesAcaoJogador(2, lutador2);
+        atualizarPainelRodada();
     }
 
     function definirBloqueioFormulario(bloqueado) {
@@ -225,8 +367,113 @@ document.addEventListener("DOMContentLoaded", () => {
         resultado.appendChild(bloco);
     }
 
-    function calcularDanoBasico(atacante, defensor) {
-        return Math.max(0, atacante.ataque - defensor.defesa);
+    function obterAcaoSelecionada(numeroJogador, lutador) {
+        const selecionado = document.querySelector(`input[name="acaoJ${numeroJogador}"]:checked`);
+        const valor = selecionado ? selecionado.value : "basico";
+
+        if (valor === "ofensiva" && lutador.recargaOfensiva === 0) {
+            return "ofensiva";
+        }
+
+        if (valor === "defensiva" && lutador.recargaDefensiva === 0) {
+            return "defensiva";
+        }
+
+        return "basico";
+    }
+
+    function aplicarPosturaDefensiva(lutador, linhasLog) {
+        if (lutador.classeId === "nox") {
+            lutador.efeitos.esquiva = true;
+            linhasLog.push(
+                `🛡️ ${lutador.nomeExibicao} ativou ${lutador.defensiva.nome} e vai esquivar o próximo golpe da rodada.`
+            );
+            return;
+        }
+
+        if (lutador.classeId === "iris") {
+            lutador.efeitos.barreira = 12;
+            linhasLog.push(
+                `🛡️ ${lutador.nomeExibicao} ativou ${lutador.defensiva.nome} (absorve até 12 de dano do próximo golpe).`
+            );
+            return;
+        }
+
+        if (lutador.classeId === "bronn") {
+            lutador.efeitos.muralha = true;
+            linhasLog.push(
+                `🛡️ ${lutador.nomeExibicao} ativou ${lutador.defensiva.nome} (reduz pela metade o próximo golpe).`
+            );
+        }
+    }
+
+    function executarGolpe(atacante, defensor, tipoAcao, linhasLog) {
+        let nomeAcao = "Ataque Básico";
+        let ataqueEfetivo = atacante.ataque;
+        let defesaEfetiva = defensor.defesa;
+
+        if (tipoAcao === "ofensiva") {
+            nomeAcao = atacante.ofensiva.nome;
+
+            if (atacante.classeId === "nox") {
+                ataqueEfetivo += 12;
+            } else if (atacante.classeId === "iris") {
+                defesaEfetiva = Math.floor(defensor.defesa / 2);
+            } else if (atacante.classeId === "bronn") {
+                ataqueEfetivo += 6;
+            }
+        }
+
+        const danoBruto = Math.max(0, ataqueEfetivo - defesaEfetiva);
+        let danoFinal = danoBruto;
+        const notasDefesa = [];
+
+        if (defensor.efeitos.esquiva) {
+            defensor.efeitos.esquiva = false;
+            danoFinal = 0;
+            notasDefesa.push(`${defensor.nomeExibicao} esquivou com ${defensor.defensiva.nome}`);
+        } else {
+            if (defensor.efeitos.muralha) {
+                defensor.efeitos.muralha = false;
+                danoFinal = Math.floor(danoFinal / 2);
+                notasDefesa.push(`Muralha reduziu o golpe pela metade`);
+            }
+
+            if (defensor.efeitos.barreira > 0) {
+                const absorvido = Math.min(danoFinal, defensor.efeitos.barreira);
+                defensor.efeitos.barreira = 0;
+                danoFinal = Math.max(0, danoFinal - absorvido);
+                notasDefesa.push(`Barreira Arcana absorveu ${absorvido} de dano`);
+            }
+
+            if (defensor.efeitos.escudoInvestida > 0) {
+                const absorvido = Math.min(danoFinal, defensor.efeitos.escudoInvestida);
+                defensor.efeitos.escudoInvestida = 0;
+                danoFinal = Math.max(0, danoFinal - absorvido);
+                notasDefesa.push(`proteção da Investida absorveu ${absorvido} de dano`);
+            }
+        }
+
+        // Bronn ativa proteção de até 6 após executar Investida de Escudo
+        if (tipoAcao === "ofensiva" && atacante.classeId === "bronn") {
+            atacante.efeitos.escudoInvestida = 6;
+            notasDefesa.push(`${atacante.nomeExibicao} ganhou proteção de até 6 contra o próximo golpe`);
+        }
+
+        defensor.vidaAtual = Math.max(0, defensor.vidaAtual - danoFinal);
+
+        const complemento = notasDefesa.length > 0 ? ` (${notasDefesa.join("; ")})` : "";
+        linhasLog.push(
+            `⚔️ ${atacante.nomeExibicao} usou ${nomeAcao} contra ${defensor.nomeExibicao}${complemento}: ${danoFinal} de dano. Vida de ${defensor.nomeExibicao}: ${defensor.vidaAtual}.`
+        );
+
+        return danoFinal;
+    }
+
+    function encerrarBatalha() {
+        estadoBatalha = "encerrada";
+        btnAtacar.disabled = true;
+        atualizarCardsArena();
     }
 
     function iniciarBatalha(evento) {
@@ -253,10 +500,13 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        lutador1 = criarLutador(classeId1, inputApelidoJ1.value, "J1");
-        lutador2 = criarLutador(classeId2, inputApelidoJ2.value, "J2");
+        lutador1 = criarLutador(classeId1, inputApelidoJ1.value, 1);
+        lutador2 = criarLutador(classeId2, inputApelidoJ2.value, 2);
 
+        rodadaAtual = 1;
+        rodadasSemDano = 0;
         estadoBatalha = "em_andamento";
+
         definirBloqueioFormulario(true);
         btnAtacar.disabled = false;
 
@@ -264,82 +514,148 @@ document.addEventListener("DOMContentLoaded", () => {
         resultado.replaceChildren();
         adicionarBlocoResultado("⚔️ Batalha iniciada!", [
             `${lutador1.nomeExibicao} (${lutador1.classe}) VS ${lutador2.nomeExibicao} (${lutador2.classe})`,
-            "Clique em Atacar para iniciar a troca de golpes."
+            `Rodada 1: iniciativa do Jogador 1 (${lutador1.nomeExibicao}). Escolha as ações e clique em Executar Rodada.`
         ]);
     }
 
-    function executarAtaque() {
+    function executarRodada() {
         if (estadoBatalha !== "em_andamento" || !lutador1 || !lutador2) {
             return;
         }
 
         if (lutador1.vidaAtual <= 0 || lutador2.vidaAtual <= 0) {
-            estadoBatalha = "encerrada";
-            btnAtacar.disabled = true;
+            encerrarBatalha();
             return;
+        }
+
+        const acaoJ1 = obterAcaoSelecionada(1, lutador1);
+        const acaoJ2 = obterAcaoSelecionada(2, lutador2);
+
+        // Ordem de iniciativa alternada: ímpares -> J1; pares -> J2
+        const ordem = rodadaAtual % 2 === 1
+            ? [
+                { lutador: lutador1, oponente: lutador2, acao: acaoJ1 },
+                { lutador: lutador2, oponente: lutador1, acao: acaoJ2 }
+            ]
+            : [
+                { lutador: lutador2, oponente: lutador1, acao: acaoJ2 },
+                { lutador: lutador1, oponente: lutador2, acao: acaoJ1 }
+            ];
+
+        const [primeiroTurno, segundoTurno] = ordem;
+        const linhasLog = [
+            `Iniciativa da rodada ${rodadaAtual}: ${primeiroTurno.lutador.nomeExibicao}.`
+        ];
+
+        // 1. Defesas aplicadas antes dos golpes
+        for (const turno of ordem) {
+            if (turno.acao === "defensiva") {
+                aplicarPosturaDefensiva(turno.lutador, linhasLog);
+            }
+        }
+
+        let danoTotalRodada = 0;
+        let habilidadesUsadas = [];
+
+        if (primeiroTurno.acao === "ofensiva" || primeiroTurno.acao === "defensiva") {
+            habilidadesUsadas.push({ lutador: primeiroTurno.lutador, tipo: primeiroTurno.acao });
+        }
+
+        // 2. Primeiro a agir executa golpe (se não escolheu postura defensiva)
+        if (primeiroTurno.acao !== "defensiva") {
+            danoTotalRodada += executarGolpe(
+                primeiroTurno.lutador,
+                primeiroTurno.oponente,
+                primeiroTurno.acao,
+                linhasLog
+            );
         }
 
         resultado.replaceChildren();
 
-        // 1. Ataque do Jogador 1
-        const danoJ1 = calcularDanoBasico(lutador1, lutador2);
-        lutador2.vidaAtual = Math.max(0, lutador2.vidaAtual - danoJ1);
-
-        if (danoJ1 === 0) {
-            adicionarBlocoResultado("🛡️ Ataque bloqueado!", [
-                `${lutador1.nomeExibicao} atacou ${lutador2.nomeExibicao}, mas não causou dano.`,
-                `Vida restante de ${lutador2.nomeExibicao}: ${lutador2.vidaAtual}`
+        // Verifica derrota imediata do segundo antes que ele possa agir
+        if (segundoTurno.lutador.vidaAtual <= 0) {
+            adicionarBlocoResultado(`📜 Resumo da Rodada ${rodadaAtual}`, linhasLog);
+            adicionarBlocoResultado(`💀 ${segundoTurno.lutador.nomeExibicao} foi derrotado!`, [
+                `Vitória de ${primeiroTurno.lutador.nomeExibicao}! Clique em Nova Batalha para jogar novamente.`
             ]);
-        } else {
-            adicionarBlocoResultado("⚔️ Ataque!", [
-                `${lutador1.nomeExibicao} atacou ${lutador2.nomeExibicao} e causou ${danoJ1} de dano.`,
-                `Vida restante de ${lutador2.nomeExibicao}: ${lutador2.vidaAtual}`
-            ]);
-        }
-
-        atualizarCardsArena();
-
-        // Encerra imediatamente se o Jogador 2 foi derrotado (sem contra-ataque)
-        if (lutador2.vidaAtual <= 0) {
-            estadoBatalha = "encerrada";
-            btnAtacar.disabled = true;
-            adicionarBlocoResultado(`💀 ${lutador2.nomeExibicao} foi derrotado!`, [
-                `Vitória de ${lutador1.nomeExibicao}! Clique em Nova Batalha para jogar novamente.`
-            ]);
+            encerrarBatalha();
             return;
         }
 
-        // 2. Contra-ataque do Jogador 2
-        const danoJ2 = calcularDanoBasico(lutador2, lutador1);
-        lutador1.vidaAtual = Math.max(0, lutador1.vidaAtual - danoJ2);
+        // 3. Segundo a agir executa sua ação
+        if (segundoTurno.acao === "ofensiva" || segundoTurno.acao === "defensiva") {
+            habilidadesUsadas.push({ lutador: segundoTurno.lutador, tipo: segundoTurno.acao });
+        }
 
-        if (danoJ2 === 0) {
-            adicionarBlocoResultado("🛡️ Contra-ataque bloqueado!", [
-                `${lutador2.nomeExibicao} contra-atacou ${lutador1.nomeExibicao}, mas não causou dano.`,
-                `Vida restante de ${lutador1.nomeExibicao}: ${lutador1.vidaAtual}`
+        if (segundoTurno.acao !== "defensiva") {
+            danoTotalRodada += executarGolpe(
+                segundoTurno.lutador,
+                segundoTurno.oponente,
+                segundoTurno.acao,
+                linhasLog
+            );
+        }
+
+        // Verifica derrota do primeiro após o golpe do segundo
+        if (primeiroTurno.lutador.vidaAtual <= 0) {
+            adicionarBlocoResultado(`📜 Resumo da Rodada ${rodadaAtual}`, linhasLog);
+            adicionarBlocoResultado(`💀 ${primeiroTurno.lutador.nomeExibicao} foi derrotado!`, [
+                `Vitória de ${segundoTurno.lutador.nomeExibicao}! Clique em Nova Batalha para jogar novamente.`
             ]);
+            encerrarBatalha();
+            return;
+        }
+
+        // 4. Atualiza recargas (reduz existentes e aplica 2 rodadas às usadas agora)
+        for (const lutador of [lutador1, lutador2]) {
+            if (lutador.recargaOfensiva > 0) {
+                lutador.recargaOfensiva -= 1;
+            }
+            if (lutador.recargaDefensiva > 0) {
+                lutador.recargaDefensiva -= 1;
+            }
+            limparEfeitosRodada(lutador);
+        }
+
+        for (const usada of habilidadesUsadas) {
+            if (usada.tipo === "ofensiva") {
+                usada.lutador.recargaOfensiva = RECARGA_HABILIDADE;
+            } else if (usada.tipo === "defensiva") {
+                usada.lutador.recargaDefensiva = RECARGA_HABILIDADE;
+            }
+        }
+
+        // 5. Regra de empate após 3 rodadas consecutivas sem dano
+        if (danoTotalRodada === 0) {
+            rodadasSemDano += 1;
+            linhasLog.push(
+                `⚖️ Nenhum dano causado nesta rodada (${rodadasSemDano}/${LIMITE_RODADAS_SEM_DANO} rodadas seguidas sem dano).`
+            );
         } else {
-            adicionarBlocoResultado("🔥 Contra-ataque!", [
-                `${lutador2.nomeExibicao} contra-atacou ${lutador1.nomeExibicao} e causou ${danoJ2} de dano.`,
-                `Vida restante de ${lutador1.nomeExibicao}: ${lutador1.vidaAtual}`
-            ]);
+            rodadasSemDano = 0;
         }
 
+        adicionarBlocoResultado(`📜 Resumo da Rodada ${rodadaAtual}`, linhasLog);
+
+        if (rodadasSemDano >= LIMITE_RODADAS_SEM_DANO) {
+            adicionarBlocoResultado("🤝 Empate!", [
+                `A batalha terminou empatada após ${LIMITE_RODADAS_SEM_DANO} rodadas consecutivas sem dano.`
+            ]);
+            encerrarBatalha();
+            return;
+        }
+
+        rodadaAtual += 1;
         atualizarCardsArena();
-
-        if (lutador1.vidaAtual <= 0) {
-            estadoBatalha = "encerrada";
-            btnAtacar.disabled = true;
-            adicionarBlocoResultado(`💀 ${lutador1.nomeExibicao} foi derrotado!`, [
-                `Vitória de ${lutador2.nomeExibicao}! Clique em Nova Batalha para jogar novamente.`
-            ]);
-        }
     }
 
     function reiniciarBatalha() {
         estadoBatalha = "aguardando";
         lutador1 = null;
         lutador2 = null;
+        rodadaAtual = 0;
+        rodadasSemDano = 0;
 
         mensagemValidacao.textContent = "";
         resultado.replaceChildren();
@@ -373,7 +689,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Eventos de controle da batalha
     formSelecao.addEventListener("submit", iniciarBatalha);
-    btnAtacar.addEventListener("click", executarAtaque);
+    btnAtacar.addEventListener("click", executarRodada);
     btnNovaBatalha.addEventListener("click", reiniciarBatalha);
 
     // Estado inicial seguro ao abrir a página

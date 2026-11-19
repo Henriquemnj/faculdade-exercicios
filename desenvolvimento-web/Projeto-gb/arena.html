@@ -30,7 +30,7 @@
             <form id="formSelecao" class="form-selecao" novalidate>
                 <div class="grade-dupla">
                     <fieldset class="grupo-jogador">
-                        <legend>Jogador 1 (Atacante)</legend>
+                        <legend>Jogador 1</legend>
 
                         <label for="classeJ1">Personagem / Classe</label>
                         <select id="classeJ1" name="classeJ1" required>
@@ -49,7 +49,7 @@
                     </fieldset>
 
                     <fieldset class="grupo-jogador">
-                        <legend>Jogador 2 (Defensor)</legend>
+                        <legend>Jogador 2</legend>
 
                         <label for="classeJ2">Personagem / Classe</label>
                         <select id="classeJ2" name="classeJ2" required>
@@ -79,6 +79,12 @@
         <section class="arena-combate" aria-labelledby="titulo-duelo">
             <h2 id="titulo-duelo" class="titulo-secao">Campo de Batalha</h2>
 
+            <div class="painel status-rodada" aria-live="polite">
+                <p><strong>Rodada:</strong> <span id="numeroRodada">0</span></p>
+                <p><strong>Iniciativa da rodada:</strong> <span id="textoIniciativa">Aguardando início</span></p>
+                <p><strong>Rodadas seguidas sem dano:</strong> <span id="contadorSemDano">0 / 3</span></p>
+            </div>
+
             <div class="batalha">
                 <article class="personagem" aria-labelledby="titulo-card-j1">
                     <h3 id="titulo-card-j1">Jogador 1</h3>
@@ -91,6 +97,43 @@
                     <div class="barra-vida" role="progressbar" aria-label="Vida do Jogador 1" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" id="barraContainerAtacante">
                         <div id="vidaBarraAtacante"></div>
                     </div>
+
+                    <fieldset class="seletor-acao">
+                        <legend>Ação do Jogador 1</legend>
+
+                        <label class="opcao-acao">
+                            <input type="radio" id="radioBasicoJ1" name="acaoJ1" value="basico" checked disabled>
+                            <span class="opcao-texto">
+                                <span class="opcao-cabecalho">
+                                    <strong>Ataque Básico</strong>
+                                    <span class="badge-recarga pronta">Sem recarga</span>
+                                </span>
+                                <small>Golpe comum usando o ataque base.</small>
+                            </span>
+                        </label>
+
+                        <label class="opcao-acao">
+                            <input type="radio" id="radioOfensivaJ1" name="acaoJ1" value="ofensiva" disabled>
+                            <span class="opcao-texto">
+                                <span class="opcao-cabecalho">
+                                    <strong id="nomeOfensivaJ1">Habilidade Ofensiva</strong>
+                                    <span id="statusOfensivaJ1" class="badge-recarga">Aguardando</span>
+                                </span>
+                                <small id="descOfensivaJ1">Selecione um personagem para liberar.</small>
+                            </span>
+                        </label>
+
+                        <label class="opcao-acao">
+                            <input type="radio" id="radioDefensivaJ1" name="acaoJ1" value="defensiva" disabled>
+                            <span class="opcao-texto">
+                                <span class="opcao-cabecalho">
+                                    <strong id="nomeDefensivaJ1">Habilidade Defensiva</strong>
+                                    <span id="statusDefensivaJ1" class="badge-recarga">Aguardando</span>
+                                </span>
+                                <small id="descDefensivaJ1">Selecione um personagem para liberar.</small>
+                            </span>
+                        </label>
+                    </fieldset>
                 </article>
 
                 <article class="personagem" aria-labelledby="titulo-card-j2">
@@ -104,11 +147,48 @@
                     <div class="barra-vida" role="progressbar" aria-label="Vida do Jogador 2" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" id="barraContainerDefensor">
                         <div id="vidaBarraDefensor"></div>
                     </div>
+
+                    <fieldset class="seletor-acao">
+                        <legend>Ação do Jogador 2</legend>
+
+                        <label class="opcao-acao">
+                            <input type="radio" id="radioBasicoJ2" name="acaoJ2" value="basico" checked disabled>
+                            <span class="opcao-texto">
+                                <span class="opcao-cabecalho">
+                                    <strong>Ataque Básico</strong>
+                                    <span class="badge-recarga pronta">Sem recarga</span>
+                                </span>
+                                <small>Golpe comum usando o ataque base.</small>
+                            </span>
+                        </label>
+
+                        <label class="opcao-acao">
+                            <input type="radio" id="radioOfensivaJ2" name="acaoJ2" value="ofensiva" disabled>
+                            <span class="opcao-texto">
+                                <span class="opcao-cabecalho">
+                                    <strong id="nomeOfensivaJ2">Habilidade Ofensiva</strong>
+                                    <span id="statusOfensivaJ2" class="badge-recarga">Aguardando</span>
+                                </span>
+                                <small id="descOfensivaJ2">Selecione um personagem para liberar.</small>
+                            </span>
+                        </label>
+
+                        <label class="opcao-acao">
+                            <input type="radio" id="radioDefensivaJ2" name="acaoJ2" value="defensiva" disabled>
+                            <span class="opcao-texto">
+                                <span class="opcao-cabecalho">
+                                    <strong id="nomeDefensivaJ2">Habilidade Defensiva</strong>
+                                    <span id="statusDefensivaJ2" class="badge-recarga">Aguardando</span>
+                                </span>
+                                <small id="descDefensivaJ2">Selecione um personagem para liberar.</small>
+                            </span>
+                        </label>
+                    </fieldset>
                 </article>
             </div>
 
             <div class="controles-batalha">
-                <button type="button" id="btnAtacar" class="primario" disabled>Atacar ⚔️</button>
+                <button type="button" id="btnAtacar" class="primario" disabled>Executar Rodada ⚔️</button>
                 <button type="button" id="btnNovaBatalha" class="secundario">Nova Batalha 🔄</button>
             </div>
 

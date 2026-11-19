@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Batalha RPG — Início</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+    <header class="topo">
+        <div class="container">
+            <p class="marca">⚔️ Batalha RPG</p>
+            <nav aria-label="Navegação principal">
+                <ul class="menu">
+                    <li><a href="./index.html" aria-current="page">Início</a></li>
+                    <li><a href="./arena.html">Arena</a></li>
+                    <li><a href="./classes.html">Guia de Classes</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="painel destaque" aria-labelledby="titulo-inicio">
+            <h1 id="titulo-inicio">Bem-vindo à Arena de Batalha RPG</h1>
+            <p>
+                Escolha dois combatentes entre assassino, mago e tanque, personalize seus apelidos
+                e acompanhe o duelo em turnos diretamente no navegador.
+            </p>
+            <div class="acoes-inicio">
+                <a class="botao-link primario" href="./arena.html">Ir para a Arena</a>
+                <a class="botao-link secundario" href="./classes.html">Ver Guia de Classes</a>
+            </div>
+        </section>
+
+        <section class="painel" aria-labelledby="titulo-regras">
+            <h2 id="titulo-regras">Como funciona a batalha atual</h2>
+            <ul class="lista-regras">
+                <li><strong>Seleção:</strong> na Arena, escolha as classes do Jogador 1 e do Jogador 2 e defina apelidos opcionais.</li>
+                <li><strong>Prévia:</strong> confira vida, ataque e defesa de cada lutador antes de iniciar o confronto.</li>
+                <li><strong>Combate básico:</strong> a cada turno, o Jogador 1 ataca primeiro. Se o Jogador 2 sobreviver, executa um contra-ataque.</li>
+                <li><strong>Cálculo de dano:</strong> o dano equivale ao ataque menos a defesa do alvo, com valor mínimo igual a 0.</li>
+            </ul>
+        </section>
+    </main>
+
+    <footer class="rodape">
+        <div class="container">
+            <p>Projeto acadêmico de Desenvolvimento Web — Batalha RPG.</p>
+        </div>
+    </footer>
+</body>
+
+</html>

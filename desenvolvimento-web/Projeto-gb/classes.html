@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Batalha RPG — Guia de Classes</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+    <header class="topo">
+        <div class="container">
+            <p class="marca">⚔️ Batalha RPG</p>
+            <nav aria-label="Navegação principal">
+                <ul class="menu">
+                    <li><a href="./index.html">Início</a></li>
+                    <li><a href="./arena.html">Arena</a></li>
+                    <li><a href="./classes.html" aria-current="page">Guia de Classes</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="painel" aria-labelledby="titulo-guia">
+            <h1 id="titulo-guia">Guia de Classes</h1>
+            <p>
+                Conheça os três personagens disponíveis no catálogo, seus atributos iniciais e as
+                habilidades características de cada estilo de combate.
+            </p>
+        </section>
+
+        <section class="grade-classes" aria-label="Catálogo de personagens">
+            <article class="painel card-classe">
+                <header>
+                    <h2>Nox</h2>
+                    <p class="subtitulo-classe">Assassino</p>
+                </header>
+                <dl class="lista-atributos">
+                    <div>
+                        <dt>❤️ Vida</dt>
+                        <dd>85</dd>
+                    </div>
+                    <div>
+                        <dt>⚔️ Ataque</dt>
+                        <dd>34</dd>
+                    </div>
+                    <div>
+                        <dt>🛡️ Defesa</dt>
+                        <dd>6</dd>
+                    </div>
+                </dl>
+                <div class="habilidades-classe">
+                    <h3>Habilidades previstas</h3>
+                    <p><strong>Golpe Sombrio:</strong> soma 12 ao ataque.</p>
+                    <p><strong>Passo Sombrio:</strong> esquiva o próximo golpe da rodada.</p>
+                </div>
+            </article>
+
+            <article class="painel card-classe">
+                <header>
+                    <h2>Íris</h2>
+                    <p class="subtitulo-classe">Mago</p>
+                </header>
+                <dl class="lista-atributos">
+                    <div>
+                        <dt>❤️ Vida</dt>
+                        <dd>100</dd>
+                    </div>
+                    <div>
+                        <dt>⚔️ Ataque</dt>
+                        <dd>30</dd>
+                    </div>
+                    <div>
+                        <dt>🛡️ Defesa</dt>
+                        <dd>8</dd>
+                    </div>
+                </dl>
+                <div class="habilidades-classe">
+                    <h3>Habilidades previstas</h3>
+                    <p><strong>Raio Arcano:</strong> ignora metade da defesa base.</p>
+                    <p><strong>Barreira Arcana:</strong> absorve até 12 de dano do próximo golpe.</p>
+                </div>
+            </article>
+
+            <article class="painel card-classe">
+                <header>
+                    <h2>Bronn</h2>
+                    <p class="subtitulo-classe">Tanque</p>
+                </header>
+                <dl class="lista-atributos">
+                    <div>
+                        <dt>❤️ Vida</dt>
+                        <dd>135</dd>
+                    </div>
+                    <div>
+                        <dt>⚔️ Ataque</dt>
+                        <dd>23</dd>
+                    </div>
+                    <div>
+                        <dt>🛡️ Defesa</dt>
+                        <dd>14</dd>
+                    </div>
+                </dl>
+                <div class="habilidades-classe">
+                    <h3>Habilidades previstas</h3>
+                    <p><strong>Investida de Escudo:</strong> soma 6 ao ataque e protege até 6 contra o próximo golpe após executar.</p>
+                    <p><strong>Muralha:</strong> reduz pela metade o próximo golpe.</p>
+                </div>
+            </article>
+        </section>
+
+        <section class="painel aviso-etapa">
+            <p>
+                <strong>Nota da etapa atual:</strong> na versão corrente da Arena, o combate utiliza
+                os atributos base (Vida, Ataque e Defesa). As habilidades especiais serão ativadas
+                na próxima etapa de evolução.
+            </p>
+            <a class="botao-link primario" href="./arena.html">Montar batalha na Arena</a>
+        </section>
+    </main>
+
+    <footer class="rodape">
+        <div class="container">
+            <p>Projeto acadêmico de Desenvolvimento Web — Batalha RPG.</p>
+        </div>
+    </footer>
+</body>
+
+</html>

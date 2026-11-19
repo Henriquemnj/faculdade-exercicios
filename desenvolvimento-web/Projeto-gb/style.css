@@ -1,0 +1,407 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background-color: #121212;
+    color: #f3f3f3;
+    font-family: Arial, sans-serif;
+    line-height: 1.5;
+    overflow-x: hidden;
+}
+
+.container {
+    width: 100%;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 12px;
+}
+
+/* Cabeçalho e navegação */
+.topo {
+    background-color: #1b1b1b;
+    border-bottom: 2px solid #333;
+    padding: 12px 0;
+    margin-bottom: 20px;
+}
+
+.topo .container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+}
+
+.marca {
+    margin: 0;
+    font-size: 1.35rem;
+    font-weight: bold;
+}
+
+.menu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+}
+
+.menu a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    padding: 8px 14px;
+    border-radius: 8px;
+    background-color: #262626;
+    color: #f3f3f3;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 0.95rem;
+    border: 1px solid #444;
+}
+
+.menu a:hover,
+.menu a:focus-visible {
+    background-color: #333;
+}
+
+.menu a[aria-current="page"] {
+    background-color: #2e7d32;
+    border-color: #4caf50;
+    color: #ffffff;
+}
+
+/* Painéis gerais */
+.painel {
+    background-color: #1f1f1f;
+    border: 2px solid #3c3c3c;
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 20px;
+}
+
+.painel h1,
+.painel h2,
+.titulo-secao {
+    margin-top: 0;
+}
+
+.titulo-secao {
+    text-align: center;
+    margin-bottom: 14px;
+}
+
+.destaque {
+    text-align: center;
+}
+
+.acoes-inicio {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.lista-regras {
+    padding-left: 20px;
+    margin-bottom: 0;
+}
+
+.lista-regras li + li {
+    margin-top: 8px;
+}
+
+/* Botões e links de ação */
+button,
+.botao-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: center;
+}
+
+button.primario,
+.botao-link.primario {
+    background-color: #2e7d32;
+    color: #ffffff;
+}
+
+button.primario:hover:not(:disabled),
+.botao-link.primario:hover {
+    background-color: #388e3c;
+}
+
+button.secundario,
+.botao-link.secundario {
+    background-color: #37474f;
+    color: #ffffff;
+}
+
+button.secundario:hover:not(:disabled),
+.botao-link.secundario:hover {
+    background-color: #455a64;
+}
+
+button:disabled {
+    background-color: #3a3a3a;
+    color: #8c8c8c;
+    cursor: not-allowed;
+}
+
+/* Guia de Classes */
+.grade-classes {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.card-classe {
+    margin-bottom: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.card-classe h2 {
+    margin-bottom: 2px;
+}
+
+.subtitulo-classe {
+    margin: 0 0 12px;
+    color: #a5d6a7;
+    font-weight: bold;
+}
+
+.lista-atributos {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin: 0 0 14px;
+    padding: 10px;
+    background-color: #161616;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.lista-atributos dt {
+    font-size: 0.85rem;
+    color: #cccccc;
+}
+
+.lista-atributos dd {
+    margin: 4px 0 0;
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+.habilidades-classe h3 {
+    font-size: 1rem;
+    margin: 0 0 6px;
+}
+
+.habilidades-classe p {
+    margin: 4px 0;
+    font-size: 0.92rem;
+}
+
+/* Formulário da Arena */
+.form-selecao {
+    margin-top: 14px;
+}
+
+.grade-dupla {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+}
+
+.grupo-jogador {
+    border: 1px solid #4a4a4a;
+    border-radius: 8px;
+    padding: 14px;
+    margin: 0;
+    min-width: 0;
+}
+
+.grupo-jogador legend {
+    font-weight: bold;
+    padding: 0 6px;
+}
+
+.grupo-jogador label {
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 4px;
+    font-size: 0.92rem;
+    font-weight: bold;
+}
+
+.grupo-jogador select,
+.grupo-jogador input {
+    width: 100%;
+    min-height: 40px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid #555;
+    background-color: #141414;
+    color: #ffffff;
+    font-size: 0.95rem;
+}
+
+.grupo-jogador select:disabled,
+.grupo-jogador input:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+.previa-lutador {
+    margin-top: 12px;
+    padding: 10px;
+    border-radius: 6px;
+    background-color: #161616;
+    border: 1px dashed #4a4a4a;
+    font-size: 0.9rem;
+    overflow-wrap: anywhere;
+}
+
+.previa-lutador p {
+    margin: 4px 0;
+}
+
+.previa-vazia {
+    color: #b0b0b0;
+}
+
+.mensagem-erro {
+    color: #ff8a80;
+    font-weight: bold;
+    margin: 12px 0 0;
+    min-height: 1.4em;
+}
+
+.mensagem-erro:empty {
+    display: none;
+}
+
+.acoes-form {
+    margin-top: 14px;
+    display: flex;
+    justify-content: center;
+}
+
+/* Arena de Combate */
+.batalha {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.personagem {
+    background-color: #1f1f1f;
+    padding: 16px;
+    border: 2px solid #555;
+    border-radius: 10px;
+    width: 100%;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.personagem h3 {
+    margin-top: 0;
+}
+
+.personagem p {
+    margin: 8px 0;
+}
+
+.barra-vida {
+    width: 100%;
+    height: 20px;
+    background-color: #444;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 12px;
+}
+
+#vidaBarraAtacante,
+#vidaBarraDefensor {
+    width: 100%;
+    height: 100%;
+    background-color: green;
+    border-radius: 10px;
+    transition: width 0.2s ease, background-color 0.2s ease;
+}
+
+.controles-batalha {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin: 20px 0;
+}
+
+.resultado {
+    width: 100%;
+    max-width: 680px;
+    margin: 20px auto 0;
+    padding: 16px;
+    background-color: #1f1f1f;
+    border: 2px solid #555;
+    border-radius: 10px;
+    overflow-wrap: anywhere;
+}
+
+.resultado:empty {
+    display: none;
+}
+
+.resultado h3 {
+    margin-top: 0;
+}
+
+.resultado p {
+    margin: 6px 0;
+}
+
+.rodape {
+    margin-top: 32px;
+    padding: 16px 0;
+    border-top: 1px solid #2e2e2e;
+    text-align: center;
+    font-size: 0.88rem;
+    color: #b0b0b0;
+}
+
+/* Telas maiores (tablets e desktops) */
+@media (min-width: 680px) {
+    .topo .container {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .grade-dupla,
+    .batalha {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .grade-classes {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}

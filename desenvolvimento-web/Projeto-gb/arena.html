@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Batalha RPG — Arena</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+    <header class="topo">
+        <div class="container">
+            <p class="marca">⚔️ Batalha RPG</p>
+            <nav aria-label="Navegação principal">
+                <ul class="menu">
+                    <li><a href="./index.html">Início</a></li>
+                    <li><a href="./arena.html" aria-current="page">Arena</a></li>
+                    <li><a href="./classes.html">Guia de Classes</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="painel" aria-labelledby="titulo-selecao">
+            <h1 id="titulo-selecao">Arena de Combate</h1>
+            <p>Selecione os dois personagens, preencha apelidos se desejar e confira os atributos antes de iniciar.</p>
+
+            <form id="formSelecao" class="form-selecao" novalidate>
+                <div class="grade-dupla">
+                    <fieldset class="grupo-jogador">
+                        <legend>Jogador 1 (Atacante)</legend>
+
+                        <label for="classeJ1">Personagem / Classe</label>
+                        <select id="classeJ1" name="classeJ1" required>
+                            <option value="">Selecione um personagem...</option>
+                            <option value="nox">Nox — Assassino</option>
+                            <option value="iris">Íris — Mago</option>
+                            <option value="bronn">Bronn — Tanque</option>
+                        </select>
+
+                        <label for="apelidoJ1">Apelido (opcional)</label>
+                        <input type="text" id="apelidoJ1" name="apelidoJ1" maxlength="24" placeholder="Ex.: Sombra Veloz">
+
+                        <div class="previa-lutador" id="previaJ1" aria-live="polite">
+                            <p class="previa-vazia">Escolha um personagem para visualizar classe e atributos.</p>
+                        </div>
+                    </fieldset>
+
+                    <fieldset class="grupo-jogador">
+                        <legend>Jogador 2 (Defensor)</legend>
+
+                        <label for="classeJ2">Personagem / Classe</label>
+                        <select id="classeJ2" name="classeJ2" required>
+                            <option value="">Selecione um personagem...</option>
+                            <option value="nox">Nox — Assassino</option>
+                            <option value="iris">Íris — Mago</option>
+                            <option value="bronn">Bronn — Tanque</option>
+                        </select>
+
+                        <label for="apelidoJ2">Apelido (opcional)</label>
+                        <input type="text" id="apelidoJ2" name="apelidoJ2" maxlength="24" placeholder="Ex.: Muralha de Aço">
+
+                        <div class="previa-lutador" id="previaJ2" aria-live="polite">
+                            <p class="previa-vazia">Escolha um personagem para visualizar classe e atributos.</p>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <p id="mensagemValidacao" class="mensagem-erro" role="alert" aria-live="assertive"></p>
+
+                <div class="acoes-form">
+                    <button type="submit" id="btnIniciar" class="primario">Iniciar Batalha</button>
+                </div>
+            </form>
+        </section>
+
+        <section class="arena-combate" aria-labelledby="titulo-duelo">
+            <h2 id="titulo-duelo" class="titulo-secao">Campo de Batalha</h2>
+
+            <div class="batalha">
+                <article class="personagem" aria-labelledby="titulo-card-j1">
+                    <h3 id="titulo-card-j1">Jogador 1</h3>
+                    <p><strong>Nome:</strong> <span id="nomeAtacante">---</span></p>
+                    <p><strong>Classe:</strong> <span id="classeAtacanteTela">---</span></p>
+                    <p><strong>⚔️ Ataque:</strong> <span id="ataqueAtacante">0</span></p>
+                    <p><strong>🛡️ Defesa:</strong> <span id="defesaAtacante">0</span></p>
+                    <p><strong>❤️ Vida:</strong> <span id="vidaAtacante">0</span> / <span id="vidaMaxAtacante">0</span></p>
+
+                    <div class="barra-vida" role="progressbar" aria-label="Vida do Jogador 1" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" id="barraContainerAtacante">
+                        <div id="vidaBarraAtacante"></div>
+                    </div>
+                </article>
+
+                <article class="personagem" aria-labelledby="titulo-card-j2">
+                    <h3 id="titulo-card-j2">Jogador 2</h3>
+                    <p><strong>Nome:</strong> <span id="nomeDefensor">---</span></p>
+                    <p><strong>Classe:</strong> <span id="classeDefensorTela">---</span></p>
+                    <p><strong>⚔️ Ataque:</strong> <span id="ataqueDefensor">0</span></p>
+                    <p><strong>🛡️ Defesa:</strong> <span id="defesaDefensor">0</span></p>
+                    <p><strong>❤️ Vida:</strong> <span id="vidaDefensor">0</span> / <span id="vidaMaxDefensor">0</span></p>
+
+                    <div class="barra-vida" role="progressbar" aria-label="Vida do Jogador 2" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" id="barraContainerDefensor">
+                        <div id="vidaBarraDefensor"></div>
+                    </div>
+                </article>
+            </div>
+
+            <div class="controles-batalha">
+                <button type="button" id="btnAtacar" class="primario" disabled>Atacar ⚔️</button>
+                <button type="button" id="btnNovaBatalha" class="secundario">Nova Batalha 🔄</button>
+            </div>
+
+            <section id="resultado" class="resultado" aria-live="polite"></section>
+        </section>
+    </main>
+
+    <footer class="rodape">
+        <div class="container">
+            <p>Projeto acadêmico de Desenvolvimento Web — Batalha RPG.</p>
+        </div>
+    </footer>
+
+    <script src="./script.js"></script>
+</body>
+
+</html>

@@ -39,10 +39,9 @@ Foi usado para controlar a seleção dos personagens, atualizar atributos e apel
 
 ## 4. Como o grupo desenvolveu o trabalho
 
-José Henrique e Carlos desenvolveram o projeto em conjunto. Trabalhamos nas mesmas partes e discutimos as decisões de estrutura, regras, personagens e funcionamento da arena para que os dois compreendessem o conceito geral do jogo.
+Desenvolvemos o projeto em conjunto. Trabalhamos nas mesmas partes e discutimos as decisões de estrutura, regras, personagens e funcionamento da arena para que os dois compreendessem o conceito geral do jogo.
 
-Durante o desenvolvimento, acompanhamos as alterações, revisamos o funcionamento das páginas e ajustamos juntos a lógica e a apresentação do combate. A colaboração nas mesmas etapas ajudou a manter o projeto coerente e permitiu que ambos participassem das decisões e do aprendizado.
-
+Durante o desenvolvimento, acompanhamos as alterações, revisamos o funcionamento das páginas e ajustamos juntos a lógica e a apresentação do combate.
 ## 5. Capturas de tela do site funcionando
 
 As capturas abaixo mostram a seleção dos personagens, o combate na arena, o resultado da partida e o guia de classes. Os arquivos estão na pasta `img/screenshots/`.

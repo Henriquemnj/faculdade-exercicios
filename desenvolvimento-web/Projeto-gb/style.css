@@ -322,7 +322,7 @@ button:disabled {
     justify-content: center;
 }
 
-/* Status da rodada (faixa compacta acima do campo) */
+/* Status da rodada */
 .status-rodada {
     display: grid;
     grid-template-columns: 1fr;
@@ -336,7 +336,7 @@ button:disabled {
     font-size: 0.92rem;
 }
 
-/* Grade principal do Campo de Batalha (Mobile primeiro: Palco -> J1 -> J2) */
+/* Grade principal do Campo de Batalha */
 .arena-combate:focus {
     outline: none;
 }
@@ -626,20 +626,28 @@ button:disabled {
     color: #ffcdd2;
 }
 
-/* Palco central da Arena com piso e personagens de corpo inteiro */
+/* Palco central da Arena com espaço superior para o letreiro de vitória */
 .palco-arena {
     position: relative;
-    min-height: 255px;
+    min-height: 288px;
     border-radius: 12px;
     border: 1px solid rgba(56, 189, 248, 0.28);
     background:
         radial-gradient(ellipse at 50% 42%, rgba(16, 185, 129, 0.06) 0%, rgba(7, 11, 20, 0.34) 72%, rgba(5, 8, 15, 0.62) 100%);
     box-shadow: inset 0 0 36px rgba(0, 0, 0, 0.6);
-    padding: 12px 8px 18px;
+    padding: 74px 8px 18px;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
     overflow: hidden;
+    transition: border-color 450ms ease, box-shadow 450ms ease;
+}
+
+.palco-arena.vitoria-revelada {
+    border-color: rgba(245, 196, 81, 0.65);
+    box-shadow:
+        inset 0 0 46px rgba(245, 184, 65, 0.14),
+        0 0 28px rgba(245, 184, 65, 0.16);
 }
 
 /* Piso da arena onde os pés se apoiam */
@@ -658,6 +666,14 @@ button:disabled {
         0 10px 26px rgba(0, 0, 0, 0.75),
         inset 0 0 22px rgba(45, 212, 191, 0.16);
     pointer-events: none;
+    transition: border-color 450ms ease, box-shadow 450ms ease;
+}
+
+.palco-arena.vitoria-revelada .piso-arena {
+    border-color: rgba(251, 211, 108, 0.65);
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.8),
+        inset 0 0 28px rgba(245, 184, 65, 0.28);
 }
 
 .piso-runas {
@@ -667,14 +683,15 @@ button:disabled {
     border: 1px dashed rgba(240, 194, 92, 0.42);
 }
 
-/* Posicionamento lado a lado dos dois combatentes */
+/* Posicionamento lado a lado dos combatentes */
 .lutadores-palco {
+    --palco-gap: 12px;
     position: relative;
     z-index: 2;
     display: grid;
     grid-template-columns: 1fr 1fr;
     align-items: end;
-    gap: 12px;
+    gap: var(--palco-gap);
     width: 100%;
     padding-bottom: 18px;
 }
@@ -685,6 +702,23 @@ button:disabled {
     align-items: center;
     justify-content: flex-end;
     min-width: 0;
+    will-change: transform, opacity;
+    transition: transform 650ms cubic-bezier(0.22, 1, 0.36, 1), opacity 350ms ease-out;
+}
+
+/* Etapa 1: Derrotado, sombra e etiqueta somem em 350ms */
+.slot-lutador.lutador-derrotado {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Etapa 2: Vencedor desliza até o centro exato da plataforma em 650ms */
+.lado-j1.vencedor-centralizado {
+    transform: translateX(calc(50% + (var(--palco-gap) / 2)));
+}
+
+.lado-j2.vencedor-centralizado {
+    transform: translateX(calc(-50% - (var(--palco-gap) / 2)));
 }
 
 .plaqueta-lutador {
@@ -700,6 +734,11 @@ button:disabled {
     text-overflow: ellipsis;
     background-color: rgba(11, 16, 26, 0.88);
     border: 1px solid #475569;
+    transition: opacity 280ms ease;
+}
+
+.palco-arena.vitoria-revelada .lutador-vencedor .plaqueta-lutador {
+    opacity: 0;
 }
 
 .plaqueta-j1 {
@@ -715,12 +754,11 @@ button:disabled {
 .figura-corpo-inteiro {
     position: relative;
     z-index: 2;
-    width: 128px;
-    height: 168px;
+    width: 124px;
+    height: 162px;
     display: flex;
     align-items: flex-end;
     justify-content: center;
-    transition: transform 0.25s ease, opacity 0.25s ease;
 }
 
 .figura-corpo-inteiro img,
@@ -733,18 +771,11 @@ button:disabled {
     filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.65));
 }
 
-/* Jogador 2 fica à direita olhando para a esquerda */
 .lado-j2 .figura-corpo-inteiro img,
 .lado-j2 .figura-corpo-inteiro svg {
     transform: scaleX(-1);
 }
 
-.slot-lutador.derrotado .figura-corpo-inteiro {
-    opacity: 0.42;
-    filter: grayscale(0.75);
-}
-
-/* Sombra de contato alinhada na linha dos pés */
 .sombra-contato {
     position: relative;
     z-index: 1;
@@ -754,6 +785,214 @@ button:disabled {
     margin-top: -8px;
     border-radius: 50%;
     background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.86) 0%, rgba(0, 0, 0, 0.4) 48%, rgba(0, 0, 0, 0) 75%);
+}
+
+/* =========================================================
+   HALO DOURADO, PARTÍCULAS E LETREIRO DE VITÓRIA / EMPATE
+   ========================================================= */
+
+.halo-vitoria {
+    position: absolute;
+    left: 50%;
+    top: 56%;
+    width: min(320px, 84%);
+    height: min(320px, 84%);
+    transform: translate(-50%, -50%) scale(0.72);
+    border-radius: 50%;
+    background: radial-gradient(
+        circle,
+        rgba(253, 224, 71, 0.34) 0%,
+        rgba(245, 158, 11, 0.2) 38%,
+        rgba(56, 189, 248, 0.08) 62%,
+        transparent 75%
+    );
+    opacity: 0;
+    pointer-events: none;
+    z-index: 1;
+    transition: opacity 550ms ease-out, transform 650ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.palco-arena.vitoria-revelada .halo-vitoria {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+    animation: pulsoHaloTriunfal 3.6s ease-in-out 550ms infinite alternate;
+}
+
+.particulas-vitoria {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 450ms ease;
+}
+
+.palco-arena.vitoria-revelada .particulas-vitoria {
+    opacity: 1;
+}
+
+.faisca-vitoria {
+    position: absolute;
+    bottom: 24px;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background-color: #fde047;
+    box-shadow: 0 0 10px rgba(253, 224, 71, 0.9);
+    opacity: 0;
+}
+
+.faisca-vitoria:nth-child(even) {
+    background-color: #5eead4;
+    box-shadow: 0 0 10px rgba(94, 234, 212, 0.85);
+}
+
+.palco-arena.vitoria-revelada .faisca-vitoria {
+    animation: subirFaiscaVitoria 3.4s ease-out infinite;
+}
+
+.faisca-vitoria.f1 { left: 26%; animation-delay: 0s; }
+.faisca-vitoria.f2 { left: 34%; animation-delay: 0.7s; }
+.faisca-vitoria.f3 { left: 42%; animation-delay: 1.4s; }
+.faisca-vitoria.f4 { right: 42%; animation-delay: 0.4s; }
+.faisca-vitoria.f5 { right: 34%; animation-delay: 1.1s; }
+.faisca-vitoria.f6 { right: 26%; animation-delay: 1.8s; }
+
+/* Letreiro triunfal posicionado acima do vencedor */
+.banner-desfecho {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    z-index: 4;
+    width: calc(100% - 16px);
+    max-width: 390px;
+    transform: translate(-50%, -10px) scale(0.94);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 420ms ease-out, transform 460ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.palco-arena.vitoria-revelada .banner-desfecho,
+.palco-arena.empate-revelado .banner-desfecho {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+}
+
+.banner-moldura {
+    position: relative;
+    overflow: hidden;
+    padding: 8px 14px 9px;
+    border-radius: 10px;
+    text-align: center;
+    background: linear-gradient(180deg, rgba(13, 21, 36, 0.92) 0%, rgba(8, 13, 24, 0.96) 100%);
+    border: 1px solid rgba(245, 196, 81, 0.62);
+    box-shadow:
+        0 10px 26px rgba(0, 0, 0, 0.72),
+        inset 0 0 18px rgba(245, 184, 65, 0.16);
+}
+
+.palco-arena.empate-revelado .banner-moldura {
+    border-color: rgba(125, 211, 252, 0.55);
+    box-shadow:
+        0 10px 26px rgba(0, 0, 0, 0.72),
+        inset 0 0 18px rgba(56, 189, 248, 0.14);
+}
+
+.banner-ornamento {
+    display: block;
+    width: 64px;
+    height: 2px;
+    margin: 0 auto 4px;
+    background: linear-gradient(90deg, transparent 0%, #fbbf24 50%, transparent 100%);
+}
+
+.palco-arena.empate-revelado .banner-ornamento {
+    background: linear-gradient(90deg, transparent 0%, #38bdf8 50%, transparent 100%);
+}
+
+.banner-desfecho-titulo {
+    margin: 0;
+    font-size: clamp(1.3rem, 4.4vw, 2.05rem);
+    font-weight: 900;
+    letter-spacing: 0.14em;
+    line-height: 1.1;
+    text-transform: uppercase;
+    background: linear-gradient(180deg, #fef9c3 0%, #fbbf24 52%, #b45309 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 2px 8px rgba(245, 158, 11, 0.38));
+}
+
+.palco-arena.empate-revelado .banner-desfecho-titulo {
+    background: linear-gradient(180deg, #f0f9ff 0%, #7dd3fc 55%, #0284c7 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    filter: drop-shadow(0 2px 8px rgba(56, 189, 248, 0.35));
+}
+
+.banner-desfecho-subtitulo {
+    margin: 3px 0 0;
+    font-size: clamp(0.84rem, 2.6vw, 1.04rem);
+    font-weight: bold;
+    color: #f8fafc;
+    letter-spacing: 0.03em;
+    overflow-wrap: anywhere;
+}
+
+/* Brilho breve que cruza o letreiro ao revelar */
+.banner-brilho {
+    position: absolute;
+    top: 0;
+    left: -60%;
+    width: 45%;
+    height: 100%;
+    background: linear-gradient(105deg, transparent 0%, rgba(254, 249, 195, 0.35) 50%, transparent 100%);
+    transform: skewX(-20deg);
+    pointer-events: none;
+}
+
+.palco-arena.vitoria-revelada .banner-brilho {
+    animation: brilhoLetreiro 950ms ease-out 1 forwards;
+}
+
+@keyframes brilhoLetreiro {
+    0% {
+        left: -60%;
+        opacity: 0;
+    }
+    30% {
+        opacity: 1;
+    }
+    100% {
+        left: 135%;
+        opacity: 0;
+    }
+}
+
+@keyframes pulsoHaloTriunfal {
+    0% {
+        opacity: 0.78;
+        transform: translate(-50%, -50%) scale(0.96);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.05);
+    }
+}
+
+@keyframes subirFaiscaVitoria {
+    0% {
+        transform: translate3d(0, 0, 0) scale(0.7);
+        opacity: 0;
+    }
+    25% {
+        opacity: 0.9;
+    }
+    100% {
+        transform: translate3d(0, -155px, 0) scale(1.1);
+        opacity: 0;
+    }
 }
 
 /* Controles e log abaixo do campo */
@@ -824,12 +1063,13 @@ button:disabled {
     }
 
     .palco-arena {
-        min-height: 330px;
+        min-height: 365px;
+        padding-top: 86px;
     }
 
     .figura-corpo-inteiro {
-        width: 175px;
-        height: 230px;
+        width: 172px;
+        height: 224px;
     }
 
     .piso-arena {
@@ -851,13 +1091,13 @@ button:disabled {
     }
 
     .palco-arena {
-        min-height: 410px;
-        padding: 18px 20px 24px;
+        min-height: 440px;
+        padding: 96px 20px 24px;
     }
 
     .figura-corpo-inteiro {
-        width: 210px;
-        height: 276px;
+        width: 204px;
+        height: 266px;
     }
 
     .piso-arena {
@@ -867,8 +1107,13 @@ button:disabled {
     }
 
     .lutadores-palco {
-        gap: 28px;
+        --palco-gap: 28px;
         padding-bottom: 24px;
+    }
+
+    .banner-desfecho {
+        top: 14px;
+        max-width: 430px;
     }
 }
 
@@ -898,7 +1143,6 @@ body.pagina-arena {
     border-top-color: #202d42;
 }
 
-/* Degradê escuro atrás do formulário, cards, barras de vida e resultado */
 .pagina-arena .painel,
 .pagina-arena .personagem,
 .pagina-arena .resultado {
@@ -923,7 +1167,6 @@ body.pagina-arena {
     border: 1px solid #384a66;
 }
 
-/* Contêiner fixo do cenário (decorativo, sem interceptar cliques) */
 .arena-cenario {
     position: fixed;
     inset: 0;
@@ -934,11 +1177,9 @@ body.pagina-arena {
         radial-gradient(circle at 50% 18%, rgba(28, 56, 94, 0.35) 0%, rgba(10, 17, 30, 0.85) 55%, #060911 100%);
 }
 
-/* Camada 1: Arte base estática (CSS funcional + encaixe para imagem futura) */
 .arena-base-arte {
     position: absolute;
     inset: 0;
-    /* background-image: url("./img/arena-fundo.webp"); */
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -987,7 +1228,6 @@ body.pagina-arena {
     border: 1px solid rgba(240, 194, 92, 0.25);
 }
 
-/* Camada 2: Névoa azul-escura deslizando devagar */
 .arena-nevoa {
     position: absolute;
     left: -30%;
@@ -1012,7 +1252,6 @@ body.pagina-arena {
     animation: deslizarNevoaDireita 34s ease-in-out infinite alternate;
 }
 
-/* Camada 3: Cristais turquesa pulsando nas bordas */
 .arena-cristais {
     position: absolute;
     top: 52%;
@@ -1072,7 +1311,6 @@ body.pagina-arena {
     animation-name: pulsoCristalC3;
 }
 
-/* Camada 4: Partículas de luz subindo pelas laterais */
 .arena-particulas {
     position: absolute;
     inset: 0;
@@ -1115,36 +1353,18 @@ body.pagina-arena {
 }
 
 @keyframes deslizarNevoaEsquerda {
-    0% {
-        transform: translate3d(-4%, 0, 0);
-        opacity: 0.55;
-    }
-    100% {
-        transform: translate3d(4%, -1.5%, 0);
-        opacity: 0.85;
-    }
+    0%   { transform: translate3d(-4%, 0, 0); opacity: 0.55; }
+    100% { transform: translate3d(4%, -1.5%, 0); opacity: 0.85; }
 }
 
 @keyframes deslizarNevoaDireita {
-    0% {
-        transform: translate3d(4%, 0, 0);
-        opacity: 0.5;
-    }
-    100% {
-        transform: translate3d(-4%, 1.5%, 0);
-        opacity: 0.82;
-    }
+    0%   { transform: translate3d(4%, 0, 0); opacity: 0.5; }
+    100% { transform: translate3d(-4%, 1.5%, 0); opacity: 0.82; }
 }
 
 @keyframes pulsoCristal {
-    0% {
-        opacity: 0.58;
-        transform: scale(0.97);
-    }
-    100% {
-        opacity: 1;
-        transform: scale(1.04);
-    }
+    0%   { opacity: 0.58; transform: scale(0.97); }
+    100% { opacity: 1; transform: scale(1.04); }
 }
 
 @keyframes pulsoCristalC1 {
@@ -1158,20 +1378,10 @@ body.pagina-arena {
 }
 
 @keyframes subirParticula {
-    0% {
-        transform: translate3d(0, 0, 0) scale(0.75);
-        opacity: 0;
-    }
-    20% {
-        opacity: 0.85;
-    }
-    80% {
-        opacity: 0.65;
-    }
-    100% {
-        transform: translate3d(6px, -135px, 0) scale(1.1);
-        opacity: 0;
-    }
+    0%   { transform: translate3d(0, 0, 0) scale(0.75); opacity: 0; }
+    20%  { opacity: 0.85; }
+    80%  { opacity: 0.65; }
+    100% { transform: translate3d(6px, -135px, 0) scale(1.1); opacity: 0; }
 }
 
 /* Ajustes finos para telas pequenas (320px e 375px) */
@@ -1181,23 +1391,36 @@ body.pagina-arena {
     }
 
     .palco-arena {
-        min-height: 232px;
-        padding: 10px 6px 14px;
+        min-height: 274px;
+        padding: 72px 6px 14px;
     }
 
     .lutadores-palco {
-        gap: 6px;
+        --palco-gap: 6px;
         padding-bottom: 14px;
     }
 
     .figura-corpo-inteiro {
-        width: 112px;
-        height: 146px;
+        width: 108px;
+        height: 142px;
     }
 
     .plaqueta-lutador {
         font-size: 0.7rem;
         padding: 2px 7px;
+    }
+
+    .banner-desfecho {
+        top: 8px;
+        width: calc(100% - 12px);
+    }
+
+    .banner-moldura {
+        padding: 6px 10px 7px;
+    }
+
+    .banner-desfecho-titulo {
+        letter-spacing: 0.1em;
     }
 
     .arena-cristais {
@@ -1224,13 +1447,26 @@ body.pagina-arena {
     .p4 { left: auto; right: 4%; top: 46%; }
 }
 
-/* Acessibilidade: cenário estático quando o usuário prefere movimento reduzido */
+/* Acessibilidade: cenário e encerramento estáticos com prefers-reduced-motion */
 @media (prefers-reduced-motion: reduce) {
     .arena-nevoa,
     .cristal-halo,
     .cristal,
-    .particula {
+    .particula,
+    .halo-vitoria,
+    .faisca-vitoria,
+    .banner-brilho {
         animation: none !important;
+    }
+
+    .slot-lutador,
+    .plaqueta-lutador,
+    .halo-vitoria,
+    .particulas-vitoria,
+    .banner-desfecho,
+    .palco-arena,
+    .piso-arena {
+        transition: none !important;
     }
 
     .arena-nevoa {
